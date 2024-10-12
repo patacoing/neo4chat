@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Chat backend app using Neo4j, Redis, FastAPI and Websockets"
 authors = ["patacoing <romain.lefebvre1104@gmail.com>"]
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.12"
