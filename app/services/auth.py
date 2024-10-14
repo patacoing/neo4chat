@@ -28,8 +28,10 @@ class AuthService:
         return bool(self.pwd_context.verify(plain_password, hashed_password))
 
     @staticmethod
-    def create_access_token(data: dict) -> Token:
-        to_encode = data.copy()
+    def create_access_token(email: str) -> Token:
+        to_encode: dict[str, str | datetime] = {
+            "sub": email
+        }
         expire = datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
         to_encode.update({"exp": expire})
         encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)

@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
+from pydantic import SecretStr
 
 from app.models.user import User
 from app.schemas.token import Token
@@ -19,7 +20,7 @@ async def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(OAuth2PasswordRequestForm),
     user_service: UserService = Depends(UserService)
 ) -> Token:
-    return await user_service.login(LoginUserSchema(email=form_data.username, password=form_data.password))
+    return await user_service.login(LoginUserSchema(email=form_data.username, password=SecretStr(form_data.password)))
 
 
 @router.get("/me")
