@@ -2,6 +2,7 @@ from typing import Any
 
 from app.configuration.database.async_driver import IAsyncDriver, AsyncDriver
 from app.exceptions.database import DatabaseNotConnectedException
+from app.settings import settings
 
 
 class Database:
@@ -27,3 +28,12 @@ class Database:
             raise DatabaseNotConnectedException()
 
         return await self.async_driver.query(query, **kwargs)
+
+
+db = Database(
+    uri=settings.DB_URI,
+    auth=(settings.DB_USER, settings.DB_PASSWORD)
+)
+
+def get_db():
+    return db
