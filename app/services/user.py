@@ -1,8 +1,9 @@
 from fastapi import Depends
 
+from app.exceptions.auth import WrongPasswordOrEmail
 from app.exceptions.user import UserAlreadyExistsException
 from app.repositories.user import UserRepository
-from app.schemas.user import CreateUserSchema, UserSchema
+from app.schemas.user import CreateUserSchema, UserSchema, LoginUserSchema
 from app.services.auth import AuthService
 
 
@@ -17,4 +18,6 @@ class UserService:
             raise UserAlreadyExistsException()
 
         hashed_password = self.auth_service.get_hashed_password(user.password.get_secret_value())
-        return await self.user_repository.create_user(user, hashed_password)
+        user_registered = await self.user_repository.create_user(user, hashed_password)
+
+        return UserSchema(**user_registered.model_dump())
