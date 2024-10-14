@@ -41,4 +41,4 @@ async def get_current_user(
     if not user:
         raise WrongPasswordOrEmail()
 
-    return User(**user.model_dump())
+    return user
