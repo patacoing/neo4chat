@@ -1,9 +1,14 @@
+from fastapi import Depends
 from passlib.context import CryptContext
 
 
+def get_pwd_context() -> CryptContext:
+    return CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+
 class AuthService:
-    def __init__(self) -> None:
-        self.pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+    def __init__(self, context: CryptContext = Depends(get_pwd_context)) -> None:
+        self.pwd_context = context
 
     def get_hashed_password(self, password: str) -> str:
         return self.pwd_context.hash(password)
