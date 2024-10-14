@@ -12,6 +12,7 @@ fastapi = {extras = ["standard"], version = "^0.115.0"}
 pydantic-settings = "^2.5.2"
 neo4j = "^5.25.0"
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+pyjwt = "^2.9.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
