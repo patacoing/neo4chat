@@ -4,7 +4,7 @@ from app.exceptions.auth import WrongPasswordOrEmail
 from app.exceptions.user import UserAlreadyExistsException
 from app.models.user import User
 from app.repositories.user import UserRepository
-from app.schemas.token import TokenData
+from app.schemas.token import TokenData, Token
 from app.schemas.user import CreateUserSchema, UserSchema, LoginUserSchema
 from app.services.auth import AuthService
 
@@ -24,12 +24,12 @@ class UserService:
 
         return UserSchema(**user_registered.model_dump())
 
-    async def login(self, user: LoginUserSchema):
+    async def login(self, user: LoginUserSchema) -> Token:
         user_in_db = await self.user_repository.get_user_by_email(user.email)
         if not user_in_db or not self.auth_service.verify_password(user.password.get_secret_value(), user_in_db.password):
             raise WrongPasswordOrEmail()
 
-        return self.auth_service.create_access_token({"sub": user.email})
+        return self.auth_service.create_access_token(user.email)
 
 
 async def get_current_user(
@@ -37,5 +37,8 @@ async def get_current_user(
     token_data: TokenData = Depends(AuthService.get_current_user_data)
 ) -> User:
     user = await user_repository.get_user_by_email(token_data.email)
+
+    if not user:
+        raise WrongPasswordOrEmail()
 
     return User(**user.model_dump())
