@@ -42,7 +42,7 @@ class AuthService:
         )
 
     @staticmethod
-    async def get_current_user_data(token: str = Depends(oauth2_scheme)) -> TokenData:
+    def get_current_user_data(token: str = Depends(oauth2_scheme)) -> TokenData:
         try:
             payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
             email: str = payload.get("sub")
