@@ -6,12 +6,15 @@ class DbSettings(BaseSettings):
     DB_USER: str = "neo4j"
     DB_PASSWORD: str = "testtest"
 
+
+class AuthSettings(BaseSettings):
+    SECRET_KEY: str
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+
+class Settings(DbSettings, AuthSettings):
     model_config = {
         "env_file": ".env",
     }
-
-
-class Settings(DbSettings):
-    pass
 
 settings = Settings()
