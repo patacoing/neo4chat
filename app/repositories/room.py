@@ -11,9 +11,7 @@ class RoomRepository:
     def __init__(self, db: Database = Depends(get_db)) -> None:
         self.db = db
 
-    async def create_room(self, room: CreateRoomSchema) -> Room:
-        created_at = datetime.now()
-
+    async def create_room(self, room: CreateRoomSchema, created_at: datetime = datetime.now()) -> Room:
         await self.db.query(
             "CREATE (r: Room {name: $name, created_at: $created_at})",
             name=room.name,
