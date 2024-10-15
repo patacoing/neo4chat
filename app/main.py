@@ -4,6 +4,7 @@ from typing_extensions import AsyncGenerator
 
 from app.configuration.database.database import get_db
 from app.routers.auth import router as auth_router
+from app.routers.room import router as room_router
 
 
 @asynccontextmanager
@@ -17,3 +18,4 @@ app = FastAPI(lifespan=lifespan)
 
 
 app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
+app.include_router(room_router, prefix="/api/rooms", tags=["rooms"])
