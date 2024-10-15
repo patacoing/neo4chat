@@ -51,5 +51,8 @@ jobs:
           python -m pip install poetry
           poetry install --with dev
 
-      - name: Run tests
-        run: poetry run pytest
+      - name: Run coverage
+        run: poetry run coverage run
+
+      - name: Test coverage report
+        run: poetry run coverage report
