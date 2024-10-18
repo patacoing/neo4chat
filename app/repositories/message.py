@@ -12,7 +12,7 @@ class MessageRepository:
     def __init__(self, db: Database = Depends(get_db)) -> None:
         self.db = db
 
-    async def create_message(self, user: User, room: Room, message: CreateMessageSchema, sent_at = datetime.now()) -> Message:
+    async def create_message(self, user: User, room: Room, message: CreateMessageSchema, sent_at: datetime = datetime.now()) -> Message:
         messages, summary, keys = await self.db.query(
             """
             MATCH (u: User) WHERE ID(u) = $user_id
