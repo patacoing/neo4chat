@@ -1,22 +1,26 @@
 from fastapi import Depends
 
+from app.exceptions.room import RoomNotFoundException
 from app.models.user import User
 from app.repositories.message import MessageRepository
+from app.repositories.room import RoomRepository
 from app.schemas.message import CreateMessageSchema, MessageSchema
-from app.services.room import RoomService
 
 
 class MessageService:
     def __init__(
         self,
-        room_service: RoomService = Depends(RoomService),
+        room_repository: RoomRepository = Depends(RoomRepository),
         message_repository: MessageRepository = Depends(MessageRepository)
     ) -> None:
-        self.room_service = room_service
+        self.room_repository = room_repository
         self.message_repository = message_repository
 
     async def send_message(self, user: User, room_id: int, message: CreateMessageSchema) -> MessageSchema:
-        room = await self.room_service.get_room_by_id(room_id)
+        room = await self.room_repository.get_room_by_id(room_id)
+
+        if room is None:
+            raise RoomNotFoundException()
 
         message_created = await self.message_repository.create_message(user, room, message)
 
