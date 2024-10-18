@@ -51,6 +51,18 @@ def mock_user():
     return MockRecord()
 
 
+@pytest.fixture
+def mock_messages(mock_message, mock_user):
+
+    return [
+        {
+            "m": mock_message,
+            "u": mock_user,
+            "s": {"sent_at": DateTime.from_iso_format("2021-01-01T00:00:00+00:00")}
+        }
+    ]
+
+
 @pytest.mark.asyncio
 async def test_create_message_should_create_message(mock_database, mock_message, mock_user):
     mock_database.query.return_value = (
@@ -89,3 +101,19 @@ async def test_create_message_should_create_message(mock_database, mock_message,
     assert response.id == mock_message.id
     assert response.sent_at == DateTime.from_iso_format("2021-01-01T00:00:00+00:00")
     assert response.sent_by.id == mock_user.id
+
+
+@pytest.mark.asyncio
+async def test_get_messages_from_room_order_by_sent_at(mock_database, mock_messages):
+    mock_database.query.return_value = (mock_messages, None, None)
+
+    room = Room(
+        id=1,
+        name="test",
+        created_at=DateTime.from_iso_format("2021-01-01T00:00:00+00:00")
+    )
+
+    message_repository = MessageRepository(mock_database)
+    messages = await message_repository.get_messages_from_room_order_by_sent_at(room)
+
+    assert len(messages) == 1
