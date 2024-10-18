@@ -37,3 +37,11 @@ async def send_message(
         user: User = Depends(get_current_user)
 ) -> MessageSchema:
     return await message_service.send_message(user=user, room_id=id, message=message)
+
+
+@router.get(
+    path="/{id}/messages",
+    dependencies=[Depends(get_current_user)],
+)
+async def get_messages(id: int, message_service: MessageService = Depends(MessageService)) -> list[MessageSchema]:
+    return await message_service.get_messages_from_room(room_id=id)

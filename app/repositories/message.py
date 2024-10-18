@@ -17,8 +17,8 @@ class MessageRepository:
             """
             MATCH (u: User) WHERE ID(u) = $user_id
             MATCH (r: Room) WHERE ID(r) = $room_id
-            CREATE (u)-[:SENT {sent_at: $sent_at}]->(m: Message {content: $content})-[:IN]->(r)
-            RETURN m
+            CREATE (u)-[s:SENT {sent_at: $sent_at}]->(m: Message {content: $content})-[:IN]->(r)
+            RETURN m,s
             """,
             user_id=user.id,
             room_id=room.id,
@@ -27,8 +27,36 @@ class MessageRepository:
         )
 
         message_created = messages[0]["m"]
+        sent = messages[0]["s"]
 
-        return Message(
-            id=message_created.id,
-            **message.model_dump(),
+        return Message(id=message_created.id, **message.model_dump(), sent_at=sent["sent_at"], sent_by=user)
+
+    async def get_messages_from_room_order_by_sent_at(self, room: Room) -> list[Message]:
+        records, summary, keys = await self.db.query(
+            """
+            MATCH (r: Room) WHERE ID(r) = $room_id
+            MATCH (u: User)-[s:SENT]->(m: Message)-[:IN]->(r)
+            RETURN u,s,m
+            ORDER BY s.sent_at DESC
+            """,
+            room_id=room.id
         )
+
+        messages = []
+
+        for record in records:
+            message = record["m"]
+            user = record["u"]
+            sent = record["s"]
+
+            messages.append(Message(
+                id=message.id,
+                **dict(message),
+                sent_at=sent["sent_at"],
+                sent_by=User(
+                    id=user.id,
+                    **dict(user)
+                )
+            ))
+
+        return messages
