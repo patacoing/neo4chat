@@ -2,7 +2,7 @@ from unittest.mock import Mock
 import pytest
 from neo4j.time import DateTime
 
-from app.exceptions.room import RoomAlreadyExistsException
+from app.exceptions.room import RoomAlreadyExistsException, RoomNotFoundException
 from app.models.room import Room
 from app.repositories.room import RoomRepository
 from app.schemas.room import CreateRoomSchema
@@ -56,3 +56,32 @@ async def test_create_room_should_return_room(mock_room_repository):
     assert response.name == room_created.name
     assert response.created_at == room_created.created_at.to_native()
     assert response.id == room_created.id
+
+
+@pytest.mark.asyncio
+async def test_get_room_by_id_should_raise_exception_when_room_not_found(mock_room_repository):
+    room_in_db = None
+
+    mock_room_repository.get_room_by_id.return_value = room_in_db
+
+    with pytest.raises(RoomNotFoundException):
+        room_service = RoomService(mock_room_repository)
+        await room_service.get_room_by_id(1)
+
+
+@pytest.mark.asyncio
+async def test_get_room_by_id_should_return_room(mock_room_repository):
+    room_in_db = Room(
+        id=1,
+        name="Room 1",
+        created_at=DateTime.from_iso_format("2021-01-01T00:00:00")
+    )
+
+    mock_room_repository.get_room_by_id.return_value = room_in_db
+
+    room_service = RoomService(mock_room_repository)
+    response = await room_service.get_room_by_id(1)
+
+    assert response.name == room_in_db.name
+    assert response.created_at == room_in_db.created_at.to_native()
+    assert response.id == room_in_db.id

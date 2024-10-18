@@ -80,3 +80,33 @@ async def test_get_room_by_name_should_return_none(mock_database):
     room_repository = RoomRepository(mock_database)
 
     assert await room_repository.get_room_by_name("Room 1") is None
+
+
+@pytest.mark.asyncio
+async def test_get_room_by_id_should_return_room(mock_database, mock_record):
+    mock_database.query.return_value = (
+        [
+            {
+                "r": mock_record
+            }
+        ],
+        None,
+        None
+    )
+
+    room_repository = RoomRepository(mock_database)
+
+    response = await room_repository.get_room_by_id(1)
+
+    assert response.id == 1
+    assert response.name == "Room 1"
+    assert response.created_at == DateTime.from_iso_format("2021-01-01T00:00:00")
+
+
+@pytest.mark.asyncio
+async def test_get_room_by_id_should_return_none(mock_database):
+    mock_database.query.return_value = ([], None, None)
+
+    room_repository = RoomRepository(mock_database)
+
+    assert await room_repository.get_room_by_id(1) is None

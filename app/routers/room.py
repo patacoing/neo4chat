@@ -14,3 +14,11 @@ router = APIRouter()
 )
 async def create_room(create_room_schema: CreateRoomSchema, room_service: RoomService = Depends(RoomService)) -> RoomSchema:
     return await room_service.create_room(create_room_schema)
+
+
+@router.get(
+    path="/{id}",
+    dependencies=[Depends(get_current_user)],
+)
+async def get_room(id: int, room_service: RoomService = Depends(RoomService)) -> RoomSchema:
+    return await room_service.get_room_by_id(id)
