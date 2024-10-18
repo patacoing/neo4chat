@@ -20,7 +20,26 @@ def mock_message():
     class MockRecord:
         id = 1
         _data = {
-            "content": "hello world",
+            "content": "hello world"
+        }
+
+        def __getitem__(self, key):
+            return self._data[key]
+
+        def __iter__(self):
+            return iter(self._data.items())
+
+    return MockRecord()
+
+
+@pytest.fixture
+def mock_user():
+    class MockRecord:
+        id = 1
+        _data = {
+            "username": "test",
+            "email": "test@gmail.com",
+            "password": "hashed_password"
         }
 
         def __getitem__(self, key):
@@ -33,11 +52,13 @@ def mock_message():
 
 
 @pytest.mark.asyncio
-async def test_create_message_should_create_message(mock_database, mock_message):
+async def test_create_message_should_create_message(mock_database, mock_message, mock_user):
     mock_database.query.return_value = (
         [
             {
-                "m": mock_message
+                "m": mock_message,
+                "u": mock_user,
+                "s": {"sent_at": DateTime.from_iso_format("2021-01-01T00:00:00+00:00")}
             }
         ],
         None,
@@ -66,3 +87,5 @@ async def test_create_message_should_create_message(mock_database, mock_message)
 
     assert response.content == message.content
     assert response.id == mock_message.id
+    assert response.sent_at == DateTime.from_iso_format("2021-01-01T00:00:00+00:00")
+    assert response.sent_by.id == mock_user.id

@@ -56,7 +56,12 @@ async def test_send_message_should_create_message(mock_room_repository, mock_mes
     )
 
     message = CreateMessageSchema(content="hello world")
-    message_created = Message(content="hello world", id=1)
+    message_created = Message(
+        content="hello world",
+        id=1,
+        sent_at=DateTime.fromisoformat("2021-01-01T00:00:00+00:00"),
+        sent_by=user
+    )
 
     mock_room_repository.get_room_by_id.return_value = room
     mock_message_repository.create_message.return_value = message_created
