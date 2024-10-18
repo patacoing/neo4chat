@@ -7,5 +7,6 @@ class CreateRoomSchema(BaseModel):
 
 
 class RoomSchema(BaseModel):
+    id: int
     name: str
     created_at: datetime
