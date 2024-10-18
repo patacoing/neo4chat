@@ -11,9 +11,32 @@ def mock_database():
     return Mock(Database)
 
 
+@pytest.fixture
+def mock_record():
+    class MockRecord:
+        id = 1
+        _data = {
+            "username": "test",
+            "email": "test@gmail.com",
+            "password": "hashed_password"
+        }
+
+        def __getitem__(self, key):
+            return self._data[key]
+
+        def __iter__(self):
+            return iter(self._data.items())
+
+    return MockRecord()
+
+
 @pytest.mark.asyncio
-async def test_create_user_should_return_user(mock_database):
-    mock_database.query.return_value = None, None, None
+async def test_create_user_should_return_user(mock_database, mock_record):
+    mock_database.query.return_value = [
+        {
+            "u": mock_record
+        }
+    ], None, None
 
     user_repository = UserRepository(mock_database)
 
@@ -27,17 +50,14 @@ async def test_create_user_should_return_user(mock_database):
 
     assert user.username == user_to_create.username
     assert user.email == user_to_create.email
+    assert user.id == 1
 
 
 @pytest.mark.asyncio
-async def test_get_user_by_email_should_return_user_when_user_exists(mock_database):
+async def test_get_user_by_email_should_return_user_when_user_exists(mock_database, mock_record):
     mock_database.query.return_value = [
         {
-            "u": {
-                "username": "test",
-                "email": "test@gmail.com",
-                "password": "hashed_password"
-            }
+            "u": mock_record
         }
     ], None, None
 
@@ -46,6 +66,7 @@ async def test_get_user_by_email_should_return_user_when_user_exists(mock_databa
 
     assert user.username == "test"
     assert user.email == "test@gmail.com"
+    assert user.id == 1
 
 
 @pytest.mark.asyncio

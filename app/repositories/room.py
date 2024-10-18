@@ -12,13 +12,15 @@ class RoomRepository:
         self.db = db
 
     async def create_room(self, room: CreateRoomSchema, created_at: datetime = datetime.now()) -> Room:
-        await self.db.query(
-            "CREATE (r: Room {name: $name, created_at: $created_at})",
+        rooms, summary, keys = await self.db.query(
+            "CREATE (r: Room {name: $name, created_at: $created_at}) RETURN r",
             name=room.name,
             created_at=created_at
         )
 
-        return Room(name=room.name, created_at=DateTime.from_native(created_at))
+        room_created = rooms[0]["r"]
+
+        return Room(id=room_created.id, **room.model_dump(exclude={"created_at"}), created_at=DateTime.from_native(created_at))
 
     async def get_room_by_name(self, name: str) -> Room | None:
         rooms, summary, keys = await self.db.query(
@@ -29,4 +31,20 @@ class RoomRepository:
         if not rooms:
             return None
 
-        return Room(**dict(rooms[0]["r"]))
+        room = rooms[0]["r"]
+
+        return Room(id=room.id, **dict(room))
+
+
+    async def get_room_by_id(self, id: int) -> Room | None:
+        rooms, summary, keys = await self.db.query(
+            "MATCH (r: Room) WHERE ID(r) = $id RETURN r",
+            id=id
+        )
+
+        if not rooms:
+            return None
+
+        room = rooms[0]["r"]
+
+        return Room(id=room.id, **dict(room))

@@ -13,12 +13,39 @@ def mock_database():
     return Mock(Database)
 
 
+@pytest.fixture
+def mock_record():
+    class MockRecord:
+        id = 1
+        _data = {
+            "name": "Room 1",
+            "created_at": DateTime.from_iso_format("2021-01-01T00:00:00")
+        }
+
+        def __getitem__(self, key):
+            return self._data[key]
+
+        def __iter__(self):
+            return iter(self._data.items())
+
+    return MockRecord()
+
+
 @pytest.mark.asyncio
-async def test_create_room_should_return_room(mock_database):
+async def test_create_room_should_return_room(mock_database, mock_record):
     create_room_schema = CreateRoomSchema(name="Room 1")
 
     room_repository = RoomRepository(mock_database)
     time = datetime.fromisoformat("2021-01-01T00:00:00")
+    mock_database.query.return_value = (
+        [
+            {
+                "r": mock_record
+            }
+        ],
+        None,
+        None
+    )
 
     response = await room_repository.create_room(create_room_schema, created_at=time)
 
@@ -27,14 +54,11 @@ async def test_create_room_should_return_room(mock_database):
 
 
 @pytest.mark.asyncio
-async def test_get_room_by_name_should_return_room(mock_database):
+async def test_get_room_by_name_should_return_room(mock_database, mock_record):
     mock_database.query.return_value = (
         [
             {
-                "r": {
-                    "name": "Room 1",
-                    "created_at": DateTime.from_iso_format("2021-01-01T00:00:00")
-                }
+                "r": mock_record
             }
         ],
         None,

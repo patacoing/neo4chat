@@ -8,6 +8,7 @@ class CreateUserSchema(BaseModel):
 
 
 class UserSchema(BaseModel):
+    id: int
     username: str
     email: EmailStr
 

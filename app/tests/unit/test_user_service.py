@@ -47,6 +47,7 @@ async def test_register_should_return_user(mock_user_repository, mock_auth_servi
     registered_user = UserSchema(
         username=user.username,
         email=user.email,
+        id=1
     )
 
     mock_user_repository.get_user_by_email.return_value = None
@@ -65,6 +66,7 @@ async def test_login_should_return_token(mock_user_repository, mock_auth_service
     )
 
     user_in_db = User(
+        id=1,
         username="test",
         email=user.email,
         password="hashed_password"
@@ -105,6 +107,7 @@ async def test_login_should_raise_exception_when_wrong_password(mock_user_reposi
     )
 
     user_in_db = User(
+        id=1,
         username="test",
         email=user.email,
         password="hashed_password"
@@ -123,6 +126,7 @@ async def test_get_current_user_should_return_user(mock_user_repository):
     token_data = TokenData(email="test@test.com")
 
     user = User(
+        id=1,
         username="test",
         email=token_data.email,
         password="hashed_password"
