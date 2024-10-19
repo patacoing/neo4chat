@@ -35,5 +35,5 @@ db = Database(
     auth=(settings.DB_USER, settings.DB_PASSWORD)
 )
 
-def get_db() -> Database:
-    return db
+def get_db(database: Database = db) -> Database:
+    return database
