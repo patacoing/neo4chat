@@ -82,3 +82,13 @@ def test_connector_should_connect_to_db(async_driver_mock):
 
     async_driver_mock.connect.assert_called_once()
     assert db.connected is True
+
+
+def test_get_db():
+    db = Database(
+        uri="bolt://localhost:7687",
+        auth=("neo4j", "testtest")
+    )
+
+    assert db == db
+
