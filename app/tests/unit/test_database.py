@@ -4,6 +4,7 @@ import pytest
 from app.configuration.database.async_driver import IAsyncDriver
 from app.configuration.database.database import Database, get_db
 from app.exceptions.database import DatabaseNotConnectedException
+from app.configuration.database import database
 
 
 @pytest.fixture
@@ -84,11 +85,12 @@ def test_connector_should_connect_to_db(async_driver_mock):
     assert db.connected is True
 
 
-def test_get_db():
+def test_get_db(monkeypatch):
     db = Database(
         uri="bolt://localhost:7687",
         auth=("neo4j", "testtest")
     )
+    monkeypatch.setattr(database, "db", db)
 
-    assert db == get_db(db)
+    assert db == get_db()
 
