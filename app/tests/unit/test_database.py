@@ -2,7 +2,7 @@ from unittest.mock import Mock
 import pytest
 
 from app.configuration.database.async_driver import IAsyncDriver
-from app.configuration.database.database import Database
+from app.configuration.database.database import Database, get_db
 from app.exceptions.database import DatabaseNotConnectedException
 
 
@@ -90,5 +90,5 @@ def test_get_db():
         auth=("neo4j", "testtest")
     )
 
-    assert db == db
+    assert db == get_db(db)
 
