@@ -4,13 +4,13 @@ from neo4j import AsyncGraphDatabase
 
 
 class IAsyncDriver(ABC):
-    def connect(self, uri: str, auth: tuple[str, str]) -> None:
+    def connect(self, uri: str, auth: tuple[str, str]) -> None:  # pragma: no cover
         ...
 
-    async def close(self) -> None:
+    async def close(self) -> None:  # pragma: no cover
         ...
 
-    async def query(self, query: str, **kwargs: Any) -> Any:
+    async def query(self, query: str, **kwargs: Any) -> Any:  # pragma: no cover
         ...
 
 
