@@ -3,7 +3,7 @@ import pytest
 from passlib.context import CryptContext
 
 from app.exceptions.auth import WrongPasswordOrEmail
-from app.services.auth import AuthService
+from app.services.auth import AuthService, get_pwd_context
 
 
 @pytest.fixture
@@ -49,3 +49,12 @@ def test_get_current_user_data_should_raise_exception_when_token_is_invalid():
 
 def test_get_current_user_data_should_raise_exception_when_email_is_none(monkeypatch):
     monkeypatch.setattr("jwt.decode", lambda *args, **kwargs: {"sub": None})
+
+    with pytest.raises(WrongPasswordOrEmail):
+        AuthService.get_current_user_data(token="valid_token")
+
+
+def test_get_pwd_context_should_return_context():
+    context = get_pwd_context()
+
+    assert isinstance(context, CryptContext)
