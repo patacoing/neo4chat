@@ -7,12 +7,19 @@ class DbSettings(BaseSettings):
     DB_PASSWORD: str = "testtest"
 
 
+class CacheSettings(BaseSettings):
+    CACHE_HOST: str = "localhost"
+    CACHE_PASSWORD: str = "test"
+    CACHE_PORT: int = 6379
+    CACHE_DB: int = 0
+
+
 class AuthSettings(BaseSettings):
     SECRET_KEY: str = ""
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
-class Settings(DbSettings, AuthSettings, BaseSettings):
+class Settings(DbSettings, AuthSettings, CacheSettings, BaseSettings):
     model_config = {
         "env_file": ".env",
     }
