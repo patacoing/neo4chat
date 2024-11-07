@@ -12,6 +12,7 @@ class CacheSettings(BaseSettings):
     CACHE_PASSWORD: str = "test"
     CACHE_PORT: int = 6379
     CACHE_DB: int = 0
+    CACHE_TTL: int = 60
 
 
 class AuthSettings(BaseSettings):
