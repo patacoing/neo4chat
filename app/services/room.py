@@ -16,11 +16,11 @@ class RoomService:
 
         room_created = await self.room_repository.create_room(room)
 
-        return RoomSchema(**room_created.model_dump(exclude={"created_at"}), created_at=room_created.created_at.to_native())
+        return room_created.to_room_schema()
 
     async def get_room_by_id(self, id: int) -> RoomSchema:
         room = await self.room_repository.get_room_by_id(id)
         if not room:
             raise RoomNotFoundException()
 
-        return RoomSchema(**room.model_dump(exclude={"created_at"}), created_at=room.created_at.to_native())
+        return room.to_room_schema()
