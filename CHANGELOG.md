@@ -1,3 +1,17 @@
+## 0.3.0 (2024-11-08)
+
+### BREAKING CHANGE
+
+- we added ttl value in the settings
+- we added new entries to the .env about cache connection
+
+### Feat
+
+- unit tests
+- added cache service
+- added cache implementation
+- added redis in docker-compose
+
 ## 0.2.0 (2024-10-22)
 
 ### Feat
