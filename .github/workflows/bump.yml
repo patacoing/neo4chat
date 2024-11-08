@@ -27,6 +27,12 @@ jobs:
         uses: commitizen-tools/commitizen-action@master
         with:
           github_token: ${{ secrets.TOKEN }}
+          changelog_increment_filename: body.md
 
-      - name: Print version
-        run: echo "Bumped to version ${{ steps.cz.outputs.version }}"
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: "body.md"
+          tag_name: ${{ env.REVISION }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
