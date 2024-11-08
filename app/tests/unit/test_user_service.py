@@ -44,10 +44,11 @@ async def test_register_should_return_user(mock_user_repository, mock_auth_servi
         password="password"
     )
 
-    registered_user = UserSchema(
+    registered_user = User(
         username=user.username,
         email=user.email,
-        id=1
+        id=1,
+        password=user.password.get_secret_value()
     )
 
     mock_user_repository.get_user_by_email.return_value = None
@@ -55,7 +56,7 @@ async def test_register_should_return_user(mock_user_repository, mock_auth_servi
     mock_auth_service.get_hashed_password.return_value = "hashed_password"
 
     user_service = UserService(mock_user_repository, mock_auth_service)
-    assert await user_service.register(user) == registered_user
+    assert await user_service.register(user) == registered_user.to_user_schema()
 
 
 @pytest.mark.asyncio

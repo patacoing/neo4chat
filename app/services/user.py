@@ -22,7 +22,7 @@ class UserService:
         hashed_password = self.auth_service.get_hashed_password(user.password.get_secret_value())
         user_registered = await self.user_repository.create_user(user, hashed_password)
 
-        return UserSchema(**user_registered.model_dump())
+        return user_registered.to_user_schema()
 
     async def login(self, user: LoginUserSchema) -> Token:
         user_in_db = await self.user_repository.get_user_by_email(user.email)
