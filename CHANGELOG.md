@@ -1,3 +1,14 @@
+## 0.4.0 (2024-11-08)
+
+### Feat
+
+- **message**: unit tests
+
+### Fix
+
+- **type-checking**: added type checking import
+- circular imports
+
 ## 0.3.0 (2024-11-08)
 
 ### BREAKING CHANGE
