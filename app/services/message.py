@@ -1,11 +1,11 @@
 from fastapi import Depends
 
 from app.exceptions.room import RoomNotFoundException
+from app.models.message import Message
 from app.models.user import User
 from app.repositories.message import MessageRepository
 from app.repositories.room import RoomRepository
 from app.schemas.message import CreateMessageSchema, MessageSchema
-from app.schemas.user import UserSchema
 from app.services.cache import CacheService
 
 
@@ -27,21 +27,10 @@ class MessageService:
             raise RoomNotFoundException()
 
         message_created = await self.message_repository.create_message(user.to_user_in_message(), room, message)
-        message_schema = MessageSchema(
-            **message_created.model_dump(exclude={"sent_at", "sent_by"}),
-            sent_at=message_created.sent_at.to_native(),
-            sent_by=UserSchema(**message_created.sent_by.model_dump())
-        )
+        message_schema = message_created.to_message_schema()
 
         messages = await self.message_repository.get_messages_from_room_order_by_sent_at(room)
-        messages_schema = [
-            MessageSchema(
-                **message.model_dump(exclude={"sent_at", "sent_by"}),
-                sent_at=message.sent_at.to_native(),
-                sent_by=UserSchema(**message.sent_by.model_dump())
-            )
-            for message in messages
-        ]
+        messages_schema = Message.to_messages_schema(messages)
 
         messages_schema.append(message_schema)
         self.cache_service.set_messages(room_id, messages_schema)
@@ -60,22 +49,7 @@ class MessageService:
 
         messages = await self.message_repository.get_messages_from_room_order_by_sent_at(room)
 
-        messages_schema = [
-            MessageSchema(
-                **message.model_dump(exclude={"sent_at", "sent_by"}),
-                sent_at=message.sent_at.to_native(),
-                sent_by=UserSchema(**message.sent_by.model_dump())
-            )
-            for message in messages
-        ]
-
+        messages_schema = Message.to_messages_schema(messages)
         self.cache_service.set_messages(room_id, messages_schema)
 
-        return [
-            MessageSchema(
-                **message.model_dump(exclude={"sent_at", "sent_by"}),
-                sent_at=message.sent_at.to_native(),
-                sent_by=UserSchema(**message.sent_by.model_dump())
-            )
-            for message in messages
-        ]
+        return messages_schema
