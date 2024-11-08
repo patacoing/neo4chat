@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from app.schemas.message import MessageSchema
+    from app.schemas.message import MessageSchema  # pragma: no cover
 
 from app.models.user import UserInMessage
 from app.schemas.user import UserSchema

@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from app.models.message import Message
+    from app.models.message import Message  # pragma: no cover
 
 from app.models.user import UserInMessage
 from app.schemas.user import UserSchema
