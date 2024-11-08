@@ -5,7 +5,7 @@ from neo4j.time import DateTime
 
 from app.configuration.database.database import Database
 from app.models.room import Room
-from app.models.user import User
+from app.models.user import UserInMessage
 from app.repositories.message import MessageRepository
 from app.schemas.message import CreateMessageSchema
 
@@ -77,11 +77,10 @@ async def test_create_message_should_create_message(mock_database, mock_message,
         None
     )
     message = CreateMessageSchema(content="hello world")
-    user = User(
+    user = UserInMessage(
         id=1,
         username="test",
         email="test@gmail.com",
-        password="hashed_password"
     )
     room = Room(
         id=1,

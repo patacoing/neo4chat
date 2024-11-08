@@ -1,7 +1,6 @@
 import json
 from abc import ABC
 from typing import Any
-
 from redis import Redis
 
 from app.settings import settings
@@ -37,7 +36,9 @@ class Cache(CacheInterface):
         )
 
     def get(self, key: str) -> str | None:
-        return str(self.redis.get(key))
+        value = self.redis.get(key)
+
+        return str(value) if value else None
 
     def set(self, key: str, value: str | int, ttl: int) -> None:
         self.redis.set(name=key, value=value, ex=ttl)
